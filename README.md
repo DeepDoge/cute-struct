@@ -61,6 +61,11 @@ typeof testValues // would have a type like
 }
 ```
 
+## Verifying Struct
+```ts
+test.verify(testValues)
+```
+
 ## How to convert to JSON
 ```ts
 // Get values as base values
