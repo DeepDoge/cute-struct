@@ -63,7 +63,7 @@ typeof testValues // would have a type like
 
 ## Verifying Struct
 ```ts
-test.verify(testValues)
+test.verify(testValues) // throws if it fails
 ```
 
 ## How to convert to JSON
