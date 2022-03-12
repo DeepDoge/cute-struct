@@ -50,11 +50,8 @@ export function field<
             FieldConstructorExtra_Converters<Field<Value, BaseValue, IsOptional, FieldOptions>>)
 ): Field<Value, BaseValue, IsOptional, FieldOptions>
 {
-    type ThisField = Field<Value, BaseValue, IsOptional, FieldOptions>
-    const params2: (FieldConstructor<ThisField> & FieldConstructorExtra_Converters<ThisField>) = params as any
-
-    if (!params2.fromBase) params2.fromBase = ({ baseValue }) => baseValue as any
-    if (!params2.toBase) params2.toBase = ({ value }) => value as any
+    if (!params.fromBase) params.fromBase = ({ baseValue }) => baseValue as any
+    if (!params.toBase) params.toBase = ({ value }) => value as any
 
     return Object.freeze({
         TYPE: null,
@@ -62,15 +59,16 @@ export function field<
         options: params.options,
         verify(x)
         {
+            if (params.options.optional && (x.value === null || x.value === undefined)) return
             params.verifier(x)
         },
         fromBase(x)
         {
-            return params2.fromBase(x)
+            return params.fromBase(x)
         },
         toBase(x)
         {
-            const base = params2.toBase(x)
+            const base = params.toBase(x)
             return base
         }
     })
