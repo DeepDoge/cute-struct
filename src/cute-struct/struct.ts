@@ -30,11 +30,11 @@ export interface Struct<Fields extends DefaultFields>
     fields: Readonly<Fields>
     ToEntiries(values: ValuesOfStruct<Fields>): [KeysOfStruct<Fields>, any][]
     fromEntiries(entiries: [KeysOfStruct<Fields>, any][]): ValuesOfStruct<Fields>
-    verify(values: ValuesOfStruct<Fields>): void
+    verify(values: ValuesOfStruct<Fields>): ValuesOfStruct<Fields> 
     typed(values: ValuesOfStruct<Fields>): ValuesOfStruct<Fields>
     toBase(values: ValuesOfStruct<Fields>): BaseValuesOfStruct<Fields>
     fromBase(baseValues: BaseValuesOfStruct<Fields>): ValuesOfStruct<Fields>
-    asFieldLike<IsOptional extends boolean>(options: DefaultFieldOptions<IsOptional>):
+    asFieldLike<IsOptional extends boolean>(options: DefaultFieldOptions<ValuesOfStruct<Fields>, IsOptional>):
         FieldLike<ValuesOfStruct<Fields>, BaseValuesOfStruct<Fields>, IsOptional, typeof options>
 }
 
@@ -57,16 +57,16 @@ export function struct<Fields extends DefaultFields>(fields: Fields)
         },
         verify(values)
         {
-            Object.entries(fields).forEach(([key, field]) =>
+            return struct.fromEntiries(struct.ToEntiries(values).map(([key, field]) =>
             {
                 try
                 {
-                    field.verify({ value: values[key] })
+                    return [key, field.verify({ value: values[key as string] })]
                 } catch (error)
                 {
                     throw new Error(`${field.options.label ?? key}: ${error.message}`)
                 }
-            })
+            }))
         },
         fromBase(baseValues)
         {
@@ -92,7 +92,7 @@ export function struct<Fields extends DefaultFields>(fields: Fields)
                 },
                 verify({ value })
                 {
-                    struct.verify(value)
+                    return struct.verify(value)
                 }
             })
         }

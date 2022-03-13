@@ -1,38 +1,36 @@
+import type { Struct } from "./struct"
+
 export type BaseValues = string | number
 
-type FieldVerifier<Field extends DefaultFieldLike> = (params: { value: Field['TYPE'] }) => void
-type FromBase<Field extends DefaultFieldLike> = (params: { baseValue: Field['BASETYPE'] }) => Field['TYPE']
-type ToBase<Field extends DefaultFieldLike> = (params: { value: Field['TYPE'] }) => Field['BASETYPE']
-
-export type DefaultFieldLike = FieldLike<any, any, boolean, DefaultFieldOptions<boolean>>
-export interface FieldLike<Value, BaseValue, IsOptional extends boolean, FieldOptions extends DefaultFieldOptions<IsOptional>>
+export type DefaultFieldLike = FieldLike<any, any, boolean, DefaultFieldOptions<any, boolean>>
+export interface FieldLike<Value, BaseValue, IsOptional extends boolean, FieldOptions extends DefaultFieldOptions<Value, IsOptional>>
 {
     TYPE: Value
     BASETYPE: BaseValue
     options: FieldOptions
-    verify: FieldVerifier<this>
-    toBase: ToBase<this>
-    fromBase: FromBase<this>
+    verify: (params: { value: Value }) => Value
+    toBase: (params: { value: Value }) => BaseValue
+    fromBase: (params: { baseValue: BaseValue }) => Value
 }
 // export type DefaultField = Field<any, BaseValues, boolean>
-export interface Field<Value, BaseValue extends BaseValues, IsOptional extends boolean, FieldOptions extends DefaultFieldOptions<IsOptional>> extends FieldLike<Value, BaseValue, IsOptional, FieldOptions>
+export interface Field<Value, BaseValue extends BaseValues, IsOptional extends boolean, FieldOptions extends DefaultFieldOptions<Value, IsOptional>> extends FieldLike<Value, BaseValue, IsOptional, FieldOptions>
 {
 
 }
 
-export interface DefaultFieldOptions<IsOptional extends boolean>
+export interface DefaultFieldOptions<Value, IsOptional extends boolean>
 {
     label?: string
     optional?: IsOptional
+    default?: Value
 }
 
-interface FieldConstructor<Field extends DefaultFieldLike>
+interface FieldParams<Field extends DefaultFieldLike>
 {
-    options: Field['options'],
-    verifier: Field['verify']
+    verifier: (params: { value: Field['TYPE'], options: Field['options'] }) => Field['TYPE']
 }
 
-interface FieldConstructorExtra_Converters<Field extends DefaultFieldLike>
+interface FieldParamsExtra_Converters<Field extends DefaultFieldLike>
 {
     toBase: Field['toBase'],
     fromBase: Field['fromBase']
@@ -41,35 +39,53 @@ interface FieldConstructorExtra_Converters<Field extends DefaultFieldLike>
 export function field<
     Value,
     BaseValue extends BaseValues,
-    IsOptional extends boolean,
-    FieldOptions extends DefaultFieldOptions<IsOptional>
+    FieldOptions extends Record<string, any>
 >(
-    params: FieldConstructor<Field<Value, BaseValue, IsOptional, FieldOptions>> &
-        (Value extends BaseValue ? 
-            Partial<FieldConstructorExtra_Converters<Field<Value, BaseValue, IsOptional, FieldOptions>>> : 
-            FieldConstructorExtra_Converters<Field<Value, BaseValue, IsOptional, FieldOptions>>)
-): Field<Value, BaseValue, IsOptional, FieldOptions>
+    params:
+        FieldParams<Field<Value, BaseValue, boolean, FieldOptions>> &
+        (Value extends BaseValue ?
+        Partial<FieldParamsExtra_Converters<Field<Value, BaseValue, boolean, FieldOptions>>> :
+        FieldParamsExtra_Converters<Field<Value, BaseValue, boolean, FieldOptions>>)
+)
 {
     if (!params.fromBase) params.fromBase = ({ baseValue }) => baseValue as any
     if (!params.toBase) params.toBase = ({ value }) => value as any
 
-    return Object.freeze({
-        TYPE: null,
-        BASETYPE: null,
-        options: params.options,
-        verify(x)
+    return <IsOptional extends boolean>(options: FieldOptions & DefaultFieldOptions<Value, IsOptional>) =>
+    {
+        if (options.default !== undefined) 
         {
-            if (params.options.optional && (x.value === null || x.value === undefined)) return
-            params.verifier(x)
-        },
-        fromBase(x)
-        {
-            return params.fromBase(x)
-        },
-        toBase(x)
-        {
-            const base = params.toBase(x)
-            return base
+            try {
+                params.verifier({ value: options.default, options })
+            } catch (error) {
+                throw new Error(`Default value ${options.default} can't pass verifier. It's not valid.\n\t${error.message}`)
+            }
         }
-    })
+        
+        const field: Field<Value, BaseValue, IsOptional, typeof options> = {
+            TYPE: null,
+            BASETYPE: null,
+            options: options,
+            verify(x)
+            {
+                if (x.value === null || x.value === undefined)
+                {
+                    if (options.optional) return x.value
+                    if (options.default !== undefined) return options.default
+                }
+                return params.verifier({ value: x.value, options })
+            },
+            fromBase(x)
+            {
+                return params.fromBase(x)
+            },
+            toBase(x)
+            {
+                const base = params.toBase(x)
+                return base
+            }
+        }
+
+        return Object.freeze(field)
+    }
 }
