@@ -50,6 +50,7 @@ const testValues = test.typed({
 typeof testValues // would have a type like
 {
     someValue?: string,
+    // If the field has been set `optional` like above, it gives a partial type in struct
     someValue2: string,
     manyStuff: {
         otherValue: Date
@@ -59,7 +60,11 @@ typeof testValues // would have a type like
 
 ## Verifying Struct
 ```ts
-test.verify(testValues) // returns the value back, changes might have been made, throws if it fails
+// Returns the value back
+// Changes might have been made to the value
+// - For example it will give the default value for empty fields with a default value 
+// Throws if it fails
+test.verify(testValues)
 ```
 
 ## How to convert to JSON
