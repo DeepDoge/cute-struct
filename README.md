@@ -1,5 +1,12 @@
 # What is this?
-Struct type checker, for anything, validating, generating api calls, generate forms, or databases, etc anything.
+A runtime type checker.
+
+Basically it let's you validate type of something on runtime when you need to.<br/>
+Can be used for the API server side to check if the value sent is correct.<br/>
+And can be used for generating type for that API function so we know what we need to send client side etc.<br/>
+
+It also let's you read a detailed info about the struct and its fields on runtime when you need to.<br/>
+So you can also use this to generate forms, databases and etc.<br/>
 
 # Example
 
