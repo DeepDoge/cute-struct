@@ -54,11 +54,16 @@ const testValues = test.typed({
 typeof testValues // would have a type like
 {
     someValue?: string,
-    someValue2: string.
+    someValue2: string,
     manyStuff: {
         otherValue: Date
     }
 }
+```
+
+## Verifying Struct
+```ts
+test.verify(testValues) // throws if it fails
 ```
 
 ## How to convert to JSON
