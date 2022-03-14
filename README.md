@@ -71,7 +71,7 @@ typeof testValues // would have a type like
 // Changes might have been made to the value
 // - For example it will give the default value for empty fields with a default value 
 // Throws if it fails
-test.verify(testValues)
+testValues = test.verify(testValues)
 ```
 
 ## How to convert to JSON
