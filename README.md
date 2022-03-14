@@ -91,5 +91,7 @@ const testBaseValues = test.toBase(testValues)
 const json = JSON.stringify(testBaseValues)
 
 // How to parse JSON back
-test.fromBase(JSON.parse(json))
+let values = test.fromBase(JSON.parse(json))
+// Then you can verify it with
+values = test.verify(values)
 ```
