@@ -81,6 +81,7 @@ export function struct<Fields extends DefaultFields>(fields: Fields)
             return Object.freeze({
                 TYPE: null,
                 BASETYPE: null,
+                typeName: 'struct',
                 options,
                 fromBase({ baseValue: baseValues })
                 {

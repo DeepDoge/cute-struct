@@ -2,6 +2,7 @@ import Big from "big.js"
 import { field } from "../field"
 
 export const big = field<Big, string, { min?: Big, max?: Big }>({
+    typeName: 'big',
     verifier({ value, options })
     {
         if (!(value instanceof Big)) throw new Error()

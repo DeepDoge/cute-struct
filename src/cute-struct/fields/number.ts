@@ -1,6 +1,7 @@
 import { field } from "../field"
 
 export const number = field<number, number, { min?: number, max?: number }>({
+    typeName: 'number',
     verifier({ value, options })
     {
         if (typeof value !== 'number') throw new Error()

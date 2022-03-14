@@ -1,6 +1,7 @@
 import { field } from "../field"
 
 export const date = field<Date, number, { min?: Date, max?: Date }>({
+    typeName: 'date',
     verifier({ value, options })
     {
         if (!(value instanceof Date)) throw new Error()

@@ -1,5 +1,3 @@
-import type { Struct } from "./struct"
-
 export type BaseValues = string | number
 
 export type DefaultFieldLike = FieldLike<any, any, boolean, DefaultFieldOptions<any, boolean>>
@@ -7,6 +5,7 @@ export interface FieldLike<Value, BaseValue, IsOptional extends boolean, FieldOp
 {
     TYPE: Value
     BASETYPE: BaseValue
+    typeName: string
     options: FieldOptions
     verify: (params: { value: Value }) => Value
     toBase: (params: { value: Value }) => BaseValue
@@ -27,6 +26,7 @@ export interface DefaultFieldOptions<Value, IsOptional extends boolean>
 
 interface FieldParams<Field extends DefaultFieldLike>
 {
+    typeName: string
     verifier: (params: { value: Field['TYPE'], options: Field['options'] }) => Field['TYPE']
 }
 
@@ -43,9 +43,11 @@ export function field<
 >(
     params:
         FieldParams<Field<Value, BaseValue, boolean, FieldOptions>> &
-        (Value extends BaseValue ?
-        Partial<FieldParamsExtra_Converters<Field<Value, BaseValue, boolean, FieldOptions>>> :
-        FieldParamsExtra_Converters<Field<Value, BaseValue, boolean, FieldOptions>>)
+        (
+            Value extends BaseValue ?
+            Partial<FieldParamsExtra_Converters<Field<Value, BaseValue, boolean, FieldOptions>>> :
+            FieldParamsExtra_Converters<Field<Value, BaseValue, boolean, FieldOptions>>
+        )
 )
 {
     if (!params.fromBase) params.fromBase = ({ baseValue }) => baseValue as any
@@ -55,16 +57,19 @@ export function field<
     {
         if (options.default !== undefined) 
         {
-            try {
+            try
+            {
                 params.verifier({ value: options.default, options })
-            } catch (error) {
+            } catch (error)
+            {
                 throw new Error(`Default value ${options.default} can't pass verifier. It's not valid.\n\t${error.message}`)
             }
         }
-        
+
         const field: Field<Value, BaseValue, IsOptional, typeof options> = {
             TYPE: null,
             BASETYPE: null,
+            typeName: params.typeName,
             options: options,
             verify(x)
             {
