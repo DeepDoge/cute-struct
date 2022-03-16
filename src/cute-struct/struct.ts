@@ -1,4 +1,4 @@
-import type { ExcludeMatchingProperties } from "$/types"
+import type { ExcludeMatchingProperties } from "../types"
 import type { DefaultFieldLike, DefaultFieldOptions, FieldLike } from "./field"
 
 export type DefaultFields = Record<string, DefaultFieldLike>
