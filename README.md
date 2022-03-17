@@ -10,9 +10,9 @@ So you can also use this to generate forms, databases and etc.<br/>
 
 ## Goal of the project
 Goal of this project is creating `C#` like types.<br/>
-That let's you read the field of the type on runtime.
-See their names, types on runtime.
-While also validating them on runtime.
+That let's you read the field of the type on runtime.<br/>
+See their names, types on runtime.<br/>
+While also validating them on runtime.<br/>
 
 # Example
 
