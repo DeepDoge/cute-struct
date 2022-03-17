@@ -9,7 +9,7 @@ It also let's you read a detailed info about the struct and its fields on runtim
 So you can also use this to generate forms, databases and etc.<br/>
 
 ## Goal of the project
-Goal of this project is creating a `C#` like types.<br/>
+Goal of this project is creating `C#` like types.<br/>
 That let's you read the field of the type on runtime.
 See their names, types on runtime.
 While also validating them on runtime.
