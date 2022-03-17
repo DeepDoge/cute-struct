@@ -8,6 +8,12 @@ And can be used for generating type for that API function so we know what we nee
 It also let's you read a detailed info about the struct and its fields on runtime when you need to.<br/>
 So you can also use this to generate forms, databases and etc.<br/>
 
+## Goal of the project
+Goal of this project is creating a `C#` like types.<br/>
+That let's you read the field of the type on runtime.
+See their names, types on runtime.
+While also validating them on runtime.
+
 # Example
 
 ## Built-in Date field
