@@ -30,8 +30,8 @@ export interface Struct<Fields extends DefaultFields>
     fields: Readonly<Fields>
     ToEntiries(values: ValuesOfStruct<Fields>): [KeysOfStruct<Fields>, any][]
     fromEntiries(entiries: [KeysOfStruct<Fields>, any][]): ValuesOfStruct<Fields>
-    verify(values: ValuesOfStruct<Fields>): ValuesOfStruct<Fields> 
-    typed(values: ValuesOfStruct<Fields>): ValuesOfStruct<Fields>
+    verify(values: ValuesOfStruct<Fields> & Record<string, string>): ValuesOfStruct<Fields>
+    typed(values: ValuesOfStruct<Fields> & Record<string, string>): ValuesOfStruct<Fields>
     toBase(values: ValuesOfStruct<Fields>): BaseValuesOfStruct<Fields>
     fromBase(baseValues: BaseValuesOfStruct<Fields>): ValuesOfStruct<Fields>
     asFieldLike<IsOptional extends boolean>(options: DefaultFieldOptions<ValuesOfStruct<Fields>, IsOptional>):

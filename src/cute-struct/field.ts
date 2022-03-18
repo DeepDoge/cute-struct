@@ -1,3 +1,5 @@
+export type OptionsOfField<Field extends DefaultFieldLike> = Field['options']
+
 export type BaseValues = string | number
 
 export type DefaultFieldLike = FieldLike<any, any, boolean, DefaultFieldOptions<any, boolean>>

@@ -95,3 +95,28 @@ let values = test.fromBase(JSON.parse(json))
 // Then you can verify it with
 values = test.verify(values)
 ```
+
+## Example of combining two structs
+```ts
+const articleId = string({ min: 16, max: 16 }) 
+// Also, instead of using string field for the id
+// you can also create your own custome field for it
+const articlePost = struct({
+    name: string({ max: 64 }),
+    surname: string({ max: 64 })
+})
+const articleGet = struct({
+    id: articleId,
+    ...articlePost.fields
+})
+```
+
+## Example of inheriting a field
+```ts
+const fixedSizeString = (options: Omit<OptionsOfField<ReturnType<typeof string>>, 'min' | 'max'> & { size: number }) =>
+    string({
+        ...Object.fromEntries(Object.entries(options).filter(([key, value]) => key !== 'size')),
+        min: options.size,
+        max: options.size
+    })
+```
