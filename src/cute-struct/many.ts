@@ -71,6 +71,11 @@ export function many<FieldType extends DefaultFieldLike>(field: Readonly<FieldTy
                 },
                 verify({ value })
                 {
+                    if (value === null || value === undefined)
+                    {
+                        if (options.optional) return value
+                        if (options.default !== undefined) return options.default
+                    }
                     return many.verify(value)
                 }
             })

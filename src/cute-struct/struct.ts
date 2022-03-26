@@ -57,24 +57,25 @@ export function struct<Fields extends DefaultFields>(fields: Fields)
         },
         verify(values)
         {
-            return struct.fromEntiries(struct.ToEntiries(values).map(([key, field]) =>
+            return struct.fromEntiries(struct.ToEntiries(values).map(([key, value]) =>
             {
+                const field = fields[key]
                 try
                 {
-                    return [key, field.verify({ value: values[key as string] })]
+                    return [key, field.verify({ value })]
                 } catch (error)
                 {
-                    throw new Error(`${field.options.label ?? key}: ${error.message}`)
+                    throw new Error(`fields->${field.options.label ?? key}: ${error.message}`)
                 }
             }))
         },
         fromBase(baseValues)
         {
-            return struct.fromEntiries(struct.ToEntiries(baseValues).map(([key, value]) => [key, fields[key].fromBase({ baseValue: value })]))
+            return struct.fromEntiries(struct.ToEntiries(baseValues).map(([key, baseValue]) => [key, fields[key].fromBase({ baseValue })]))
         },
         toBase(values)
         {
-            return struct.fromEntiries(struct.ToEntiries(values).map(([key, value]) => [key, fields[key].toBase({ value: value })]))
+            return struct.fromEntiries(struct.ToEntiries(values).map(([key, value]) => [key, fields[key].toBase({ value })]))
         },
         asFieldLike(options)
         {
@@ -93,6 +94,11 @@ export function struct<Fields extends DefaultFields>(fields: Fields)
                 },
                 verify({ value })
                 {
+                    if (value === null || value === undefined)
+                    {
+                        if (options.optional) return value
+                        if (options.default !== undefined) return options.default
+                    }
                     return struct.verify(value)
                 }
             })
