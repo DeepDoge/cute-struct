@@ -35,6 +35,7 @@ export const date = field<Date, number, { min?: Date, max?: Date }>({
 const test = struct({
     someValue: string({ optional: true }),
     someValue2: string({ label: "Some Value 2" }),
+    someValues: many(string({})).asFieldLike({ label: "array idk" })
     manyStuff: struct({
         otherValue: date({ })
     }).asFieldLike({ label: "Many Stuff" })
@@ -46,6 +47,7 @@ const test = struct({
 const testValues: ValuesOfStruct<typeof test['TYPE']> = {
     someValue: '123',
     someValue2: 'abc',
+    someValues: ['a', 'b', 'z', 'heh'],
     manyStuff: {
         otherValue: new Date()
     }
@@ -54,6 +56,7 @@ const testValues: ValuesOfStruct<typeof test['TYPE']> = {
 const testValues = test.typed({
     someValue: '123',
     someValue2: 'abc',
+    omeValues: ['a', 'b', 'z', 'heh'],
     manyStuff: {
         otherValue: new Date()
     }
@@ -65,6 +68,7 @@ typeof testValues // would have a type like
     someValue?: string,
     // If the field has been set `optional` like above, it gives a partial type in struct
     someValue2: string,
+    someValues: string[]
     manyStuff: {
         otherValue: Date
     }
@@ -88,6 +92,7 @@ const testBaseValues = test.toBase(testValues)
 {
     someValue?: '123',
     someValue2: 'abc',
+    someValues: ['NO', 'no what?', 'idk']
     manyStuff: {
         otherValue: 1647112539930
     }
