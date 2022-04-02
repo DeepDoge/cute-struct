@@ -96,7 +96,7 @@ export function struct<Fields extends DefaultFields>(fields: Fields)
                 {
                     if (value === null || value === undefined)
                     {
-                        if (options.optional) return { } as ValuesOfStruct<Fields>
+                        if (options.optional) return {} as ValuesOfStruct<Fields>
                         if (options.default !== undefined) return options.default
                     }
                     return struct.verify(value)
